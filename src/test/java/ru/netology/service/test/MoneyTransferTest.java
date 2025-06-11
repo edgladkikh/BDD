@@ -45,4 +45,15 @@ public class MoneyTransferTest {
                 () -> dashBoardPage.checkCardBalance(firstCardInfo, expectedBalanceFirstCard),
                 () -> dashBoardPage.checkCardBalance(secondCardInfo, expectedBalanceSecondCard));
     }
+
+    @Test
+    void shouldGetErrorMessageIfAmountMoreBalance() {
+        var amount = generateInvalidAmount(secondCardBalance);
+        var transferPage = dashBoardPage.selectCardToTransfer(firstCardInfo);
+        transferPage.makeTransfer(String.valueOf(amount), secondCardInfo);
+        assertAll(() -> transferPage.findErrorMessage("Ошибка! введена сумма, превышающая остаток на карте списания"),
+                () -> dashBoardPage.reloadDashboardPage(),
+                () -> dashBoardPage.checkCardBalance(firstCardInfo, firstCardBalance),
+                () -> dashBoardPage.checkCardBalance(secondCardInfo, secondCardBalance));
+    }
 }
